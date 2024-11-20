@@ -3,11 +3,28 @@ import Header from '../Components/Header'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { removeItem } from '../redux/slices/wishlistSlice'
+import { addToCart } from '../redux/slices/cartSlice'
 
 
 const Whishlist = () => {
+    const userCart = useSelector(state=>state.cartReducer)
     const dispatch= useDispatch()
     const userWishlist = useSelector(state => state.wishlistReducer)
+
+    const handleCart = (product)=>{
+        dispatch(removeItem(product.id))
+        dispatch(addToCart(product))
+       const existingProduct = userCart?.find(item=>item?.id==product.id)
+       if(existingProduct){
+         alert("Product quantity incremented in your cart")
+       }
+       else{
+         alert("Product added in your cart")
+         
+       }
+     }
+
+
   return (
     <>
      <Header/>
@@ -29,7 +46,7 @@ const Whishlist = () => {
                     <button className="text-xl" onClick={()=>dispatch(removeItem(product?.id))}>
                         <i className="fa-solid fa-heart-circle-xmark text-red-600"></i>
                     </button>
-                    <button className="text-xl">
+                    <button className="text-xl" onClick={()=>handleCart(product)}>
                         <i className="fa-solid fa-cart-plus text-green-600"></i>
                     </button>
                 </div>

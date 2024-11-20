@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '../Components/Header'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
@@ -10,7 +10,25 @@ const Home = () => {
   const dispatch = useDispatch()
   const {allProdutcs,loading,errorMsg}=useSelector(state=>state.productReducer)
   console.log(allProdutcs,loading,errorMsg);
+// pagination logic
+  const [currentPage,setCurrentPage]= useState(1)
+  const productPerPage = 8
+  const totalPages = Math.ceil(allProdutcs?.length/productPerPage)
+  const currentPageProductLastIndex = currentPage* productPerPage
+  const currentPageProductFirstIndex = currentPageProductLastIndex-productPerPage
+  const visibleAllProducts = allProdutcs?.slice(currentPageProductFirstIndex,currentPageProductLastIndex)
   
+  const navigateToNextPage = ()=>{
+    if(currentPage!=totalPages){
+      setCurrentPage(currentPage+1)
+    }
+
+  }
+  const navigateToPreviousPage = ()=>{
+    if(currentPage!=1){
+      setCurrentPage(currentPage-1)
+    }
+  }
 
   useEffect(()=>{
 
@@ -33,7 +51,7 @@ const Home = () => {
         {
           allProdutcs?.length>0 ?
 
-          allProdutcs?.map(product=>(
+          visibleAllProducts?.map(product=>(
             <div className="rounded border p-2 shadow">
             <img width={'100%'} height={'200px'} src={product?.thumbnail} alt="" />
             <div className="text-center">
@@ -52,6 +70,12 @@ const Home = () => {
         </div>
         
         }
+     </div>
+     <div className="text-2x mt-20 text-center font-bold">
+      <span className="cursor-pointer"><i onClick={navigateToPreviousPage} className="fa-solid fa-backward me-5"></i></span>
+      <span>{currentPage} of {totalPages}</span>
+      <span className="cursor-pointer"><i onClick={navigateToNextPage} className="fa-solid fa-forward ms-5"></i></span>
+
      </div>
      </>
      }
